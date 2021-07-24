@@ -1,0 +1,121 @@
+MOV P2,#11111111B // initiates P2 as sensor input
+MOV P0,#11111111B // initiates P2 as the output port
+MOV A,#00000000B
+MAIN:ACALL SMPCK // checks the level of the sump tank
+MOV A,P2 // moves the current status of P2 to A
+CJNE A,#11110000B,LABEL1 // checks whether tank is full
+SETB P0.1
+SETB P0.2
+SETB P0.3
+SETB P0.4
+CLR P0.0 // glows full level LED
+SETB P0.5
+LABEL1:MOV A,P2
+CJNE A,#11111000B,LABEL2 // checks whether tank is 3/4
+SETB P0.0
+SETB P0.2
+SETB P0.3
+SETB P0.4
+CLR P0.1 // glows 3/4 level LED
+LABEL2:MOV A,P2
+CJNE A,#11111100B,LABEL3 // checks whether tank is 1/2
+SETB P0.0
+SETB P0.1
+SETB P0.3
+SETB P0.4
+CLR P0.2 // glows 1/2 level LED
+LABEL3:MOV A,P2
+CJNE A,#11111110B,LABEL4 // checks whether tank is 1/4
+SETB P0.0
+SETB P0.1
+SETB P0.2
+SETB P0.4
+CLR P0.3 // glows 1/4 level LED
+JB P0.6,LABEL4
+CLR P0.5 // switches motor ON
+LABEL4:MOV A,P2
+CJNE A,#11111111B,MAIN // checks whether tank is empty
+SETB P0.0
+SETB P0.1
+SETB P0.2
+SETB P0.3
+CLR P0.4 // glows EMPTY LED
+JB P0.6,MAIN // checks whether sump is low
+CLR P0.5 // switches motor ON
+SJMP MAIN
+SMPCK:JB P0.6,LABEL5 // checks whether sump is low
+SETB P0.7 // extinguishes the sump low indicator LED
+SJMP LABEL6
+LABEL5:SETB P0.5 // switches the pump OFF
+CLR P0.7 // glows sump low indicator LED
+LABEL6:RET
+END
+
+
+MOV P0,#0FFH // initiates P2 as the output port
+MOV P2,#000H
+SETB P3.0
+CLR P3.0
+CLR A
+MAIN:SJMP SMPCK // checks the level of the sump tank
+LEVEL:MOV A,P2 // moves the current status of P2 to A
+CJNE A,#11110000B,LABEL1 // checks whether tank is full
+SETB P0.1
+SETB P0.2
+SETB P0.3
+SETB P0.4
+CLR P0.0 // glows full level LED
+ACALL STOP_PUMP
+LABEL1:MOV A,P2
+CJNE A,#11100000B,LABEL2 // checks whether tank is 3/4
+SETB P0.0
+SETB P0.2
+SETB P0.3
+SETB P0.4
+CLR P0.1 // glows 3/4 level LED
+ACALL STOP_PUMP
+LABEL2:MOV A,P2
+CJNE A,#11000000B,LABEL3 // checks whether tank is 1/2
+SETB P0.0
+SETB P0.1
+SETB P0.3
+SETB P0.4
+CLR P0.2 // glows 1/2 level LED
+SETB P0.5
+LABEL3:MOV A,P2
+CJNE A,#10000000B,LABEL4 // checks whether tank is 1/4
+SETB P0.0
+SETB P0.1
+SETB P0.2
+SETB P0.4
+CLR P0.3 // glows 1/4 level LED
+ACALL STOP_PUMP
+LABEL4:MOV A,P2
+CJNE A,#00000000B,MAIN // checks whether tank is empty
+SETB P0.0
+SETB P0.1
+SETB P0.2
+SETB P0.3
+CLR P0.4 // glows EMPTY LED
+ACALL START_PUMP // switches motor ON
+SJMP MAIN
+SMPCK:JB P3.0,LABEL5 // checks whether sump is low
+CLR P0.7
+SETB P0.5
+MOV R0,#0FFH
+SJMP LEVEL
+LABEL5:MOV R0,#000H
+SETB P0.7
+SJMP LEVEL
+START_PUMP:CJNE R0,#000H,L1
+CLR P0.5
+RET
+STOP_PUMP:SETB P0.5
+L1:RET
+END
+
+
+
+
+
+
