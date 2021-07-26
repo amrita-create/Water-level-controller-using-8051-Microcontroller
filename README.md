@@ -59,20 +59,6 @@ The Collector terminals of the Transistors are connected to VCC and the Emitter 
 
 PORT1 of the microcontroller is connected to the data pins of LCD and the control pins RS, RW and EN of the LCD Display are connected to the P3.6, GND and P3.7 respectively.
 
-For demonstration purpose, we have used a simple DC Motor Pump. It is connected to the Relay and the input to the relay is fed from P0.7 through a transistor.
-
-
-
-
-
-
-## Screenshots
-
-![App Screenshot](https://via.placeholder.com/468x300?text=App+Screenshot+Here)
-
-
-## Demo
-
-Insert gif or link to demo
+For demonstration purpose, we have used a simple DC Motor Pump. It is connected to the Relay and the input to the relay is fed from P0.7 through a transis
 
   
